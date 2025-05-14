@@ -3,7 +3,7 @@ name: Build and deploy .NET app to Azure Web App
 on:
   push:
     branches:
-      - main  # or your branch name
+      - main  # change if you're using another branch
 
 jobs:
   build-and-deploy:
@@ -13,10 +13,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup .NET Core
+      - name: Setup .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '9.0.x'  # Or '8.0.x' if you're using .NET 8
+          dotnet-version: '9.0.x'  # or '8.0.x' depending on your project
 
       - name: Restore dependencies
         run: dotnet restore
@@ -25,7 +25,7 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish -c Release -o ./publish
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
@@ -33,4 +33,4 @@ jobs:
           app-name: 'myapp2'
           slot-name: 'production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
-          package: ${{env.DOTNET_ROOT}}/myapp
+          package: ./publish
